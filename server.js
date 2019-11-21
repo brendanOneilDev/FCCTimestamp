@@ -28,10 +28,17 @@ app.get("/api/timestamp", (req, res) => {
 })
 
 app.get("/api/timestamp/:date_string", function (req, res) {
-  let date = new Date(req.params.date_string);
+  let dateRaw = req.params.date_string;
+  if (!dateRaw.includes('-')) {
+    let dateNum = parseInt(dateRaw);
+    
+    res.json({unix: dateRaw, utc: new Date(dateNum).toUTCString()})
+  }
+  
+  let date = new Date(dateRaw);
   let unixRes = date.getTime();
   let utcRes = date.toUTCString();
-  res.json({unix: unixRes, utc: utcRes});
+  date.toString() === 'Invalid Date' ? res.json({error: 'Invalid Date'}) : res.json({unix: unixRes, utc: utcRes});
 });
 
 
